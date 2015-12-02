@@ -1,0 +1,26 @@
+{
+  "name": "js-expression",
+  "version": "0.0.1",
+  "description": "A Lisp style s-expression data structure for javascript.",
+  "main": "js-exp.js",
+  "scripts": {
+    "test": "mocha --recursive -R dot",
+    "testw": "mocha --recursive -R dot -w",
+    "cov": "istanbul cover _mocha -- --recursive -R nyan",
+    "covo": "istanbul cover _mocha -- --recursive -R nyan && open coverage/lcov-report/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vicjohnson1213/js-expression.git"
+  },
+  "author": "Victor Johnson <vicjohnson1213@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vicjohnson1213/js-expression/issues"
+  },
+  "homepage": "https://github.com/vicjohnson1213/js-expression#readme",
+  "devDependencies": {
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4"
+  }
+}
