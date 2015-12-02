@@ -77,3 +77,20 @@ exp3.match(template3); // Returns true
 exp4.match(template3); // Returns true
 exp5.match(template3); // Returns true
 ```
+
+### toArray()
+
+Used to convert a JSExpression to an array of JSExpressions.
+
+**Example:**
+
+```javascript
+var exp = new JSExpression('(+ 1 2)');
+exp.toArray();
+
+/*
+ * returns [new JSExpression('+'),
+ *            new JSExpression('1'),
+ *            new JSExpression('2')];
+ */
+```

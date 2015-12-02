@@ -4,7 +4,7 @@ var assert = require('assert'),
 describe('JSExpression', function() {
     describe('constructor', function() {
         it('should igonre an empty function', function() {
-            assert.deepStrictEqual((new JSExpression('()')).expression, [[]]);
+            assert.deepStrictEqual((new JSExpression('()')).expression, []);
         });
     });
 
@@ -43,6 +43,18 @@ describe('JSExpression', function() {
             var s = new JSExpression('(\'symbol ("thing" "thing2") 1 2 3)');
             var t = new JSExpression('(SYMBOL (STRING ...) NUMBER ...)');
             assert(s.match(t));
+        });
+    });
+
+    describe('toArray', function() {
+        it('should convert to array', function() {
+            var s = new JSExpression('(+ 1 2)');
+            assert.deepStrictEqual(s.toArray(), [new JSExpression('+'), new JSExpression('1'), new JSExpression('2')]);
+        });
+
+        it('should work for a single element', function() {
+            var s = new JSExpression('1');
+            assert.deepStrictEqual(s.toArray(), [s]);
         });
     });
 });

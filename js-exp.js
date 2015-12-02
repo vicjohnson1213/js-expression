@@ -6,8 +6,8 @@ class JSExpression {
             word = '',
             inString = false;
 
-        for (var idx = 0; idx < str.length; idx++) {
-            var c = str[idx];
+        for (let idx = 0; idx < str.length; idx++) {
+            let c = str[idx];
 
             if (c === '(' && !inString) {
                 exp.push([]);
@@ -17,7 +17,7 @@ class JSExpression {
                     word = '';
                 }
 
-                var temp = exp.pop();
+                let temp = exp.pop();
                 pushWord(temp);
             }
             else if ([' ', '\n', '\t'].indexOf(c) !== -1 && !inString) {
@@ -31,13 +31,15 @@ class JSExpression {
             }
         }
 
+        pushWord(word);
+
         function pushWord(word) {
             if (word) {
                 exp[exp.length - 1].push(word);
             }
         }
 
-        this.expression = exp[0];
+        this.expression = exp[0][0];
     }
 
     match(template) {
@@ -45,16 +47,16 @@ class JSExpression {
 
         function matchExprs(strExp, strTemplate) {
             if (Array.isArray(strExp)) {
-                var result = true;
+                let result = true;
 
                 if (strTemplate[strTemplate.length - 1] === '...') {
-                    var fill = strTemplate[strTemplate.length - 2];
-                    for (var idx = strTemplate.indexOf('...'); idx < strExp.length; idx++) {
+                    let fill = strTemplate[strTemplate.length - 2];
+                    for (let idx = strTemplate.indexOf('...'); idx < strExp.length; idx++) {
                         strTemplate[idx] = fill;
                     }
                 }
 
-                for (var idx = 0; idx < strExp.length; idx++) {
+                for (let idx = 0; idx < strExp.length; idx++) {
                     if (strTemplate[idx] === 'ANY') {
                         continue;
                     }
@@ -78,6 +80,17 @@ class JSExpression {
                 }
             }
         }
+    }
+
+    toArray() {
+        if (Array.isArray(this.expression)) {
+            return this.expression.map(el => {
+                return new JSExpression(el);
+            });
+        } else {
+            return [this];
+        }
+        
     }
 }
 
