@@ -82,6 +82,8 @@ exp5.match(template3); // Returns true
 
 Used to convert a JSExpression to an array of JSExpressions.
 
+Returns an array of JSExpression.
+
 **Example:**
 
 ```javascript
@@ -92,5 +94,73 @@ exp.toArray();
  * returns [new JSExpression('+'),
  *            new JSExpression('1'),
  *            new JSExpression('2')];
+ */
+```
+
+### toNumber()
+
+Used to convert a JSExpression to a number.
+
+Returns a number or throws an error of the expression is not a number.
+
+**Example:**
+
+```javascript
+var exp = new JSExpression('1');
+exp.toNumber();
+
+/*
+ * returns 1;
+ */
+```
+
+### toString()
+
+Used to convert a JSExpression to a string.
+
+Returns a string or throws an error of the expression is not a string.
+
+**Example:**
+
+```javascript
+var exp = new JSExpression('"string"');
+exp.toString();
+
+/*
+ * returns 'string';
+ */
+```
+
+### toBoolean()
+
+Used to convert a JSExpression to a boolean.
+
+Returns a boolean or throws an error of the expression is not a boolean.
+
+**Example:**
+
+```javascript
+var exp = new JSExpression('true');
+exp.toBoolean();
+
+/*
+ * returns true;
+ */
+```
+
+### toSymbol()
+
+Used to convert a JSExpression to a symbol.
+
+Returns a symbol (string) or throws an error of the expression is not a symbol.
+
+**Example:**
+
+```javascript
+var exp = new JSExpression('\'sym');
+exp.toSymbol();
+
+/*
+ * returns '\'sym';
  */
 ```
