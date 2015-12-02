@@ -47,21 +47,17 @@ class JSExpression {
 
         function matchExprs(strExp, strTemplate) {
             if (Array.isArray(strExp)) {
-                let result = true;
-
-                if (strTemplate[strTemplate.length - 1] === '...') {
-                    let fill = strTemplate[strTemplate.length - 2];
-                    for (let idx = strTemplate.indexOf('...'); idx < strExp.length; idx++) {
-                        strTemplate[idx] = fill;
-                    }
-                }
+                let result = true,
+                    repeat;
 
                 for (let idx = 0; idx < strExp.length; idx++) {
                     if (strTemplate[idx] === 'ANY') {
                         continue;
+                    } else if (strTemplate[idx] === '...') {
+                        repeat = strTemplate[idx - 1];
                     }
 
-                    result = result && matchExprs(strExp[idx], strTemplate[idx]);
+                    result = result && matchExprs(strExp[idx], repeat || strTemplate[idx]);
                 }
 
                 return result;
