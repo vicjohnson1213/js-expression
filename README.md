@@ -44,12 +44,12 @@ Used to determine whether or not a JSExpression matches a specific template.
 A template should be any JSExpression with all legal tokens of a regular JSExpression along with an additional few to alow for more general matching.
 
 The additional symbols are as follows:
-`NUMBER`: Match any number (integer, floating point, scientific notation, etc.).
-`STRING`: Match any string enclosed in double quotation marks.
-`BOOLEAN`: Match either of the words true or false.
-`SYMBOL`: Match any legal variable name preceded by a single quote.
-`ANY`: Match anything, including additional expressions.
-`...`: Match the previous template type for an arbitrary number of tokens (may only be done with the last token of an expression.
+- `NUMBER`: Match any number (integer, floating point, scientific notation, etc.).
+- `STRING`: Match any string enclosed in double quotation marks.
+- `BOOLEAN`: Match either of the words true or false.
+- `SYMBOL`: Match any legal variable name preceded by a single quote.
+- `ANY`: Match anything, including additional expressions.
+- `...`: Match the previous template type for an arbitrary number of tokens (may only be done with the last token of an expression.
 
 **Examples:**
 
