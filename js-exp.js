@@ -51,7 +51,8 @@ class JSExpression {
                     repeat;
 
                 for (let idx = 0; idx < strExp.length; idx++) {
-                    if (strTemplate[idx] === 'ANY') {
+                    if (strTemplate[idx] === 'ANY' ||
+                        (strTemplate[idx] === '...' && strExp[idx] === undefined)) {
                         continue;
                     } else if (strTemplate[idx] === '...') {
                         repeat = strTemplate[idx - 1];
@@ -64,13 +65,13 @@ class JSExpression {
             } else {
                 switch (strTemplate) {
                     case 'NUMBER':
-                        return /[\d\.e\+\-]+/i.test(strExp);
+                        return /^[\d\.e\+\-]+$/i.test(strExp);
                     case 'SYMBOL':
-                        return /'[a-zA-Z_][a-zA-Z_\d]*/.test(strExp);
+                        return /^'[a-zA-Z_][a-zA-Z_\d]*$/.test(strExp);
                     case 'BOOLEAN':
-                        return /(?:true|false)/.test(strExp);
+                        return /^(?:true|false)$/.test(strExp);
                     case 'STRING':
-                        return /".*"/.test(strExp);
+                        return /^".*"$/.test(strExp);
                     default:
                         return strExp === strTemplate;
                 }
@@ -86,7 +87,38 @@ class JSExpression {
         } else {
             return [this];
         }
-        
+    }
+
+    toString() {
+        if (/^".*"$/.test(this.expression)) {
+            return this.expression.slice(1, this.expression.length - 1);
+        } else {
+            throw new Error('Not a string: ' + this.expression);
+        }
+    }
+
+    toNumber() {
+        if (/^[\d\.e\+\-]+$/i.test(this.expression)) {
+            return Number(this.expression);
+        } else {
+            throw new Error('Not a number: ' + this.expression);
+        }
+    }
+
+    toBoolean() {
+        if (/^(?:true|false)$/i.test(this.expression)) {
+            return this.expression === 'true';
+        } else {
+            throw new Error('Not a boolean: ' + this.expression);
+        }
+    }
+
+    toSymbol() {
+        if (/^'[a-zA-Z_][a-zA-Z_\d]*$/.test(this.expression)) {
+            return this.expression
+        } else {
+            throw new Error('Not a symbol: ' + this.expression);
+        }
     }
 }
 

@@ -57,4 +57,52 @@ describe('JSExpression', function() {
             assert.deepStrictEqual(s.toArray(), [s]);
         });
     });
+
+    describe('toString', function() {
+        it('should turn expression to string', function() {
+            var s = new JSExpression('"string"');
+            assert.strictEqual(s.toString(), 'string');
+        });
+
+        it('should throw error for not a string', function() {
+            var s = new JSExpression('1');
+            assert.throws(s.toString, Error);
+        });
+    });
+
+    describe('toNumber', function() {
+        it('should turn expression to number', function() {
+            var s = new JSExpression('1');
+            assert.strictEqual(s.toNumber(), 1);
+        });
+
+        it('should throw error for not a string', function() {
+            var s = new JSExpression('"str"');
+            assert.throws(s.toNumber, Error);
+        });
+    });
+
+    describe('toBoolean', function() {
+        it('should turn expression to boolean', function() {
+            var s = new JSExpression('false');
+            assert.strictEqual(s.toBoolean(), false);
+        });
+
+        it('should throw error for not a string', function() {
+            var s = new JSExpression('"str"');
+            assert.throws(s.toBoolean, Error);
+        });
+    });
+
+    describe('toSymbol', function() {
+        it('should turn expression to boolean', function() {
+            var s = new JSExpression('\'sym');
+            assert.strictEqual(s.toSymbol(), '\'sym');
+        });
+
+        it('should throw error for not a string', function() {
+            var s = new JSExpression('"str"');
+            assert.throws(s.toSymbol, Error);
+        });
+    });
 });
