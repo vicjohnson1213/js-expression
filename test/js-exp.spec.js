@@ -38,5 +38,11 @@ describe('JSExpression', function() {
             var t = new JSExpression('(SYMBOL NUMBER ...)');
             assert(s.match(t));
         });
+
+        it('should match ... inside an inner expression', function() {
+            var s = new JSExpression('(\'symbol ("thing" "thing2") 1 2 3)');
+            var t = new JSExpression('(SYMBOL (STRING ...) NUMBER ...)');
+            assert(s.match(t));
+        });
     });
 });

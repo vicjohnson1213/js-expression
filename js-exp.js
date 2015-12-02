@@ -41,11 +41,7 @@ class JSExpression {
     }
 
     match(template) {
-        return JSExpression.match(this, template);
-    }
-
-    static match(exp, template) {
-        return matchExprs(exp.expression, template.expression);
+        return matchExprs(this.expression, template.expression);
 
         function matchExprs(strExp, strTemplate) {
             if (Array.isArray(strExp)) {
