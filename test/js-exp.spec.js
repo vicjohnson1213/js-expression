@@ -9,6 +9,10 @@ describe('JSExpression', function() {
     });
 
     describe('match', function() {
+        it('should match single token', function() {
+            assert(new JSExpression('123').match(new JSExpression('NUMBER')));
+        });
+
         it('should match wildcards', function() {
             var s = new JSExpression('(12 \'test (+ 1 2) "str" true false)');
             var t = new JSExpression('(NUMBER SYMBOL ANY STRING BOOLEAN BOOLEAN)');
