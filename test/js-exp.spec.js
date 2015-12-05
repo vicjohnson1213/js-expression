@@ -4,7 +4,7 @@ var assert = require('assert'),
 describe('JSExpression', function() {
     describe('constructor', function() {
         it('should igonre an empty function', function() {
-            assert.deepStrictEqual((new JSExpression('()')).expression, []);
+            assert.deepStrictEqual((new JSExpression('()')).expression.expression, undefined);
         });
     });
 

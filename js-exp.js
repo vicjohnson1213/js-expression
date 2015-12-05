@@ -1,79 +1,97 @@
 'use strict';
 
+var regs = {
+    number: /^[\d\.e\+\-]+$/i,
+    symbol: /^'[a-zA-Z_][a-zA-Z_\d]*$/,
+    string: /^".*"$/,
+    bool: /^(?:true|false)$/,
+    token: /^(?:[^\s]+|"(?:[^\\"\n]|(?:\\.))*?")$/
+}
+
 class JSExpression {
-    constructor(str) {
-        var exp = [[]],
-            word = '',
-            inString = false;
+    constructor(mainStr) {
+        if (regs.token.test(mainStr)) {
+            this.expression = mainStr;
+        } else {
+            this.expression = parseStr(mainStr);
+        }
 
-        for (let idx = 0; idx < str.length; idx++) {
-            let c = str[idx];
+        function parseStr(str) {
+            var exp = [],
+                word = '',
+                inString = false,
+                depth = 0;
 
-            if (c === '(' && !inString) {
-                exp.push([]);
-            } else if (c === ')' && !inString) {
-                if (word.length > 0) {
+            if (str[0] === '(' && str[str.length - 1] === ')') {
+                str = str.slice(1, str.length - 1);
+            }
+
+            for (let idx = 0; idx < str.length; idx++) {
+                let c = str[idx];
+
+                if (c === '(' && !inString && depth === 0) {
+                    depth++;
+                } else if (c === ')' && !inString) {
+                    depth--;
                     pushWord(word);
                     word = '';
+                } else if (/^\s$/.test(c) && depth === 0) {
+                    pushWord(word);
+                    word = '';
+                } else if (c === '"') {
+                    word += '"';
+                    inString = !inString;
+                } else {
+                    word += c;
                 }
+            }
 
-                let temp = exp.pop();
-                pushWord(temp);
+            pushWord(word);
+            word = '';
+
+            function pushWord(word) {
+                if (word) {
+                    exp.push(new JSExpression(word));
+                }
             }
-            else if ([' ', '\n', '\t'].indexOf(c) !== -1 && !inString) {
-                pushWord(word);
-                word = '';
-            } else if (c === '\"') {
-                word += '"';
-                inString = !inString;
-            } else {
-                word += c;
-            }
+            
+            return exp;
         }
-
-        pushWord(word);
-
-        function pushWord(word) {
-            if (word) {
-                exp[exp.length - 1].push(word);
-            }
-        }
-
-        this.expression = exp[0][0];
     }
 
     match(template) {
-        return matchExprs(this.expression, template.expression);
-
-        function matchExprs(strExp, strTemplate) {
-            if (Array.isArray(strExp)) {
-                let result = true,
+        return matchExprs(this, template);
+        
+        function matchExprs(exp, temp) {
+            if (Array.isArray(exp.expression)) {
+                var result = true,
                     repeat;
 
-                for (let idx = 0; idx < strExp.length; idx++) {
-                    if (strTemplate[idx] === 'ANY' ||
-                        (strTemplate[idx] === '...' && strExp[idx] === undefined)) {
+                for (let idx = 0; idx < exp.expression.length; idx++) {
+                    if (temp.expression === 'ANY') {
                         continue;
-                    } else if (strTemplate[idx] === '...') {
-                        repeat = strTemplate[idx - 1];
+                    } else if (temp.expression[idx] && temp.expression[idx].expression === '...') {
+                        repeat = temp.expression[idx - 1];
                     }
 
-                    result = result && matchExprs(strExp[idx], repeat || strTemplate[idx]);
+                    var tempres = matchExprs(exp.expression[idx], repeat || temp.expression[idx]);
+
+                    result = result && tempres;
                 }
 
                 return result;
             } else {
-                switch (strTemplate) {
+                switch (temp.expression) {
                     case 'NUMBER':
-                        return /^[\d\.e\+\-]+$/i.test(strExp);
+                        return regs.number.test(exp.expression);
                     case 'SYMBOL':
-                        return /^'[a-zA-Z_][a-zA-Z_\d]*$/.test(strExp);
+                        return regs.symbol.test(exp.expression);
                     case 'BOOLEAN':
-                        return /^(?:true|false)$/.test(strExp);
+                        return regs.bool.test(exp.expression);
                     case 'STRING':
-                        return /^".*"$/.test(strExp);
+                        return regs.string.test(exp.expression);
                     default:
-                        return strExp === strTemplate;
+                        return exp.expression === temp.expression;
                 }
             }
         }
@@ -81,16 +99,14 @@ class JSExpression {
 
     toArray() {
         if (Array.isArray(this.expression)) {
-            return this.expression.map(el => {
-                return new JSExpression(el);
-            });
+            return this.expression;
         } else {
             return [this];
         }
     }
 
     toString() {
-        if (/^".*"$/.test(this.expression)) {
+        if (regs.string.test(this.expression)) {
             return this.expression.slice(1, this.expression.length - 1);
         } else {
             throw new Error('Not a string: ' + this.expression);
@@ -98,7 +114,7 @@ class JSExpression {
     }
 
     toNumber() {
-        if (/^[\d\.e\+\-]+$/i.test(this.expression)) {
+        if (regs.number.test(this.expression)) {
             return Number(this.expression);
         } else {
             throw new Error('Not a number: ' + this.expression);
@@ -106,7 +122,7 @@ class JSExpression {
     }
 
     toBoolean() {
-        if (/^(?:true|false)$/i.test(this.expression)) {
+        if (regs.bool.test(this.expression)) {
             return this.expression === 'true';
         } else {
             throw new Error('Not a boolean: ' + this.expression);
@@ -114,7 +130,7 @@ class JSExpression {
     }
 
     toSymbol() {
-        if (/^'[a-zA-Z_][a-zA-Z_\d]*$/.test(this.expression)) {
+        if (regs.symbol.test(this.expression)) {
             return this.expression
         } else {
             throw new Error('Not a symbol: ' + this.expression);
