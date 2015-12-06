@@ -5,11 +5,15 @@ var regs = {
     symbol: /^'[a-zA-Z_][a-zA-Z_\d]*$/,
     string: /^".*"$/,
     bool: /^(?:true|false)$/,
-    token: /^(?:[^\s]+|"(?:[^\\"\n]|(?:\\.))*?")$/
+    token: /^(?:[^\(\)\s]+|"(?:[^\\"\n]|(?:\\.))*?")$/
 }
 
 class JSExpression {
     constructor(mainStr) {
+
+        // If this string is just a single token, then don't recur.  Just 
+        // leave the string as the expression.  Otherwise, recur to turn all
+        // sub expressions to JSExpressions too.
         if (regs.token.test(mainStr)) {
             this.expression = mainStr;
         } else {
@@ -22,6 +26,7 @@ class JSExpression {
                 inString = false,
                 depth = 0;
 
+            // Remove leading and trailing parenthesis.
             if (str[0] === '(' && str[str.length - 1] === ')') {
                 str = str.slice(1, str.length - 1);
             }
@@ -30,10 +35,17 @@ class JSExpression {
                 let c = str[idx];
 
                 if (c === '(' && !inString && depth === 0) {
+                    // Track how deeply nested the parenthesis are, so we can build
+                    // a token containing the entire function call, then parse that
+                    // as a complete entity.
                     depth++;
                 } else if (c === ')' && !inString) {
                     depth--;
-                    pushWord(word);
+                    
+                    if (depth === 0) {
+                        pushWord(word);
+                    }
+
                     word = '';
                 } else if (/^\s$/.test(c) && depth === 0) {
                     pushWord(word);
@@ -51,6 +63,7 @@ class JSExpression {
 
             function pushWord(word) {
                 if (word) {
+                    // Make sure to create a new expression with the word.
                     exp.push(new JSExpression(word));
                 }
             }
@@ -63,14 +76,18 @@ class JSExpression {
         return matchExprs(this, template);
         
         function matchExprs(exp, temp) {
+            if (temp.expression === 'ANY') {
+                return true;
+            }
+            
+            // If the expression is an array still, it needs to be iterated and
+            // each element needs to be matched independently.
             if (Array.isArray(exp.expression)) {
                 var result = true,
                     repeat;
 
                 for (let idx = 0; idx < exp.expression.length; idx++) {
-                    if (temp.expression === 'ANY') {
-                        continue;
-                    } else if (temp.expression[idx] && temp.expression[idx].expression === '...') {
+                    if (temp.expression[idx] && temp.expression[idx].expression === '...') {
                         repeat = temp.expression[idx - 1];
                     }
 

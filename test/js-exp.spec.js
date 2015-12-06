@@ -48,6 +48,12 @@ describe('JSExpression', function() {
             var t = new JSExpression('(SYMBOL (STRING ...) NUMBER ...)');
             assert(s.match(t));
         });
+
+        it('should match ... with 0 elements', function() {
+            var s = new JSExpression('(+)');
+            var t = new JSExpression('(+ NUMBER ...)');
+            assert(s.match(t));
+        });
     });
 
     describe('toArray', function() {
@@ -64,8 +70,8 @@ describe('JSExpression', function() {
 
     describe('toString', function() {
         it('should turn expression to string', function() {
-            var s = new JSExpression('"string"');
-            assert.strictEqual(s.toString(), 'string');
+            var s = new JSExpression('"str\"ing"');
+            assert.strictEqual(s.toString(), 'str\"ing');
         });
 
         it('should throw error for not a string', function() {
