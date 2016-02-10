@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/vicjohnson1213/js-expression.svg?branch=master)](https://travis-ci.org/vicjohnson1213/js-expression)
 
-> A Lisp style s-expression data structure for javascript.
+> A Lisp style s-expression data structure for JavaScript.
 
 ```bash
 npm i clone git+https://github.com/vicjohnson1213/js-expression.git
